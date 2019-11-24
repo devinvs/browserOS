@@ -1,0 +1,102 @@
+.WindowFrame{
+    background-color: transparent;
+    position:absolute;
+
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    display: grid;
+
+    grid-template-rows: 8px 25px 100fr 8px;
+    grid-template-columns: 8px 100fr 8px;
+
+    grid-template-areas: 
+        "NW N NE"
+        "W TopBar E"
+        "W Body E"
+        "SW S SE";
+}
+
+[class^="resize"]{
+    background-color: transparent;
+}
+
+.resizeN{grid-area: N; cursor: ns-resize}
+.resizeE{grid-area: E; cursor: ew-resize}
+.resizeS{grid-area: S; cursor: ns-resize}
+.resizeW{grid-area: W; cursor: ew-resize}
+
+.resizeNE{grid-area: NE; cursor:nesw-resize}
+.resizeSE{grid-area: SE; cursor:nwse-resize}
+.resizeSW{grid-area: SW; cursor:nesw-resize}
+.resizeNW{grid-area: NW; cursor:nwse-resize}
+
+.WindowTopBar{
+    background-color: #2E282A;
+    grid-area: TopBar;
+    color: #ffffff;
+    border-radius: 5px 5px 0 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.WindowTopBar:hover{
+    cursor: grab;
+}
+
+.WindowTopBarButtons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    min-width: 70px;
+}
+
+.WindowTopBarButton{
+    border-radius: 7px;
+    color: #2E282A;
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    line-height: 15px;
+
+    transition: background-color .3s;
+}
+
+.WindowTopBarButton:hover{
+    cursor: pointer;
+}
+
+#maximize{
+    background-color: #2FBF71;
+}
+
+#maximize:hover{
+    background-color: #0F9F51;
+}
+
+#minimize{
+    background-color: #FFD23F;
+}
+
+#minimize:hover{
+    background-color: #dFb21F
+}
+
+#close{
+    background-color: #F56960;
+}
+
+#close:hover{
+    background-color: #d54940;
+}
+
+.WindowBody{
+    background-color: #ffffff;
+    grid-area: Body;
+    cursor: default;
+    overflow-y: scroll;
+}

@@ -1,0 +1,14 @@
+/* 
+Black: #2E282A
+White: #FFFFFF
+Red: #F56960
+Yellow: #FFD23F
+Green: #2FBF71
+*/
+
+#Root{
+    height:100vh;
+    width:100vw;
+    overflow: hidden;
+    position: absolute;
+}

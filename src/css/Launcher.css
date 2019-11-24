@@ -1,0 +1,58 @@
+.Launcher{
+    position: absolute;
+    width: 75px;
+    height: 30vh;
+    left: -5;
+    top: 35vh;
+    background-color: transparent;
+    border-radius: 0 10px 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    overflow-x: show;
+}
+
+[id^='btn-']{
+    width: 80px;
+    height: 60px;
+    /* border: 1px solid #ffffff; */
+    background-color: #2e282a;
+    color: #ffffff;
+    border-radius: 0 10px 10px 0;
+    transition: width .3s, height .3s;
+    display:flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1em;
+}
+
+[id^='btn-'] p{
+    position: absolute;
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+[id^='btn-']:hover{
+    width: 140px;
+    cursor: pointer;
+}
+
+[id^='btn-']:hover p{
+    opacity: 100;
+}
+
+[id^='btn-']:active{
+    height: 65px;
+}
+
+[id^='btn-'] img{
+    width: 50px;
+    opacity: 100;
+    transition: .3s opacity;
+}
+
+[id^='btn-']:hover img{
+    opacity: 0;
+}

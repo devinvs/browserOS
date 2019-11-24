@@ -1,0 +1,39 @@
+.TerminalRoot{
+    width:100%;
+    background-color: #2E282A;
+    height: 100%;
+    color: #ffffff;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+.TerminalRoot input{
+    position:absolute;
+    opacity: 0;
+    width: 100%;
+}
+
+.TerminalRoot p{
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1em;
+}
+
+.TerminalRoot textarea{
+    width:100%;
+    height:100%;
+    resize: none;
+    color: #ffffff;
+    background-color: #2e282a;
+    border: none;
+    outline: none;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1em;
+}
+
+.TerminalRoot span textarea{
+    height: auto;
+}
+
+.TerminalRoot span textarea.prompt{
+    width: 20px;
+}
