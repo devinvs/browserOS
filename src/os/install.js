@@ -1,7 +1,7 @@
 import * as disk from './disk.js'
 
 export default function main(){
-    if(localStorage.getItem("webos_version") == null || localStorage.getItem('webos_reset') != null){
+    if(localStorage.getItem("webos_version") == null || localStorage.getItem('webos_reset') != null || localStorage.getItem("webos_version") !== "0.0.1"){
         install()
     }
 }
@@ -33,6 +33,6 @@ Functioning(ish) Terminal (Type 'help' for a list of commands)`)
 }
 
 function setVersion(){
-    localStorage.setItem("webos_version", "0.0.0")
+    localStorage.setItem("webos_version", "0.0.1")
     localStorage.removeItem('webos_reset')
 }

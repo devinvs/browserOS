@@ -105,26 +105,28 @@ export default class Terminal extends React.Component{
 
     ls(args){
         if (args.length === 0){
-            return Disk.read(this.wd).contents.join(' ')
+            return Disk.read(this.wd).contents.map(e => e.name).join(' ')
+    
         }else if(args.length === 1){
-            return Disk.read(this.processPath(args[0])).contents.join('')
+            return Disk.read(this.processPath(args[0])).contents.map(e => e.name).join('')
         }
     }
 
     cd(args){
         if(args[0] == null){
-            return "Invalid Argument"
-        }
-        let newDir = this.processPath(args[0])
-        console.log(newDir)
-
-        if(Disk.exists(newDir) && Disk.read(newDir).type == "dir"){
-            this.wd = newDir
-            return ""
+            this.wd = "/home"
         }else{
-            return "There is no directory named " + args[0]
+            let newDir = this.processPath(args[0])
+
+            try {
+                if(Disk.typeOf(newDir) == "dir"){
+                    this.wd = newDir
+                    return ""
+                }
+            } catch (error) {
+                return "There is no directory named " + args[0]
+            }
         }
-        
     }
 
     echo(args){
@@ -137,82 +139,92 @@ export default class Terminal extends React.Component{
     }
     
     touch(args){
+        let output = ""
         args.forEach((arg) => {
             let path = this.processPath(arg)
-            if(Disk.exists(path)){
-                return arg + " already exists"
-            }else{
-                Disk.newFile(arg)
+            try {
+                Disk.newFile(path)
+            } catch (error) {
+                output+=path + " already exists\n"
             }
         })
+
+        return output
     }
 
     mkdir(args){
+        let output = ""
         for (let i=0; i<args.length; i++){
-            Disk.newDir(this.processPath(args[i]))
+            try {
+                Disk.newDir(this.processPath(args[i]))
+            } catch (error) {
+                output += args[i] + " already exists\n"
+            }
         }
+
+        return output
     }
 
     cat(args){
         let path = this.processPath(args[0])
-        if(Disk.exists(path)){
-            let file = Disk.read(path)
-            if(file.type === "file"){
-                return file.contents
+        try {
+            if(Disk.typeOf(path) == "file"){
+                return Disk.read(path).contents
             }else{
                 return args[0] + " is a directory"
             }
-        }else{
-            return args[0] + " does not exist"
+        } catch (error) {
+            return error.message
         }
     }
 
     nano(args){
         let path = this.processPath(args[0])
+
         if(Disk.exists(path)){
-            let file = Disk.read(path)
-            if(file.type === "file"){
-                this.setState({editor: true, editorFile: path, editorContents: file.contents, editorMessage: "Save: Ctrl+s  Exit: Ctrl+x"})
-            }else{
-                return args[0] + " is not a file"
+            if(Disk.typeOf(path) === "dir"){
+                return args[0] + ' is a directory'
             }
         }else{
             Disk.newFile(path, "")
-            this.setState({editor: true, editorFile: path, editorMessage: "Save: Ctrl+s  Exit: Ctrl+x"})
         }
+
+        this.setState({
+            editor: true,
+            editorFile: path,
+            editorContents: Disk.read(path).contents,
+            editorMessage: "Save: Ctrl+s Exit: Ctrl+x"
+        })
     }
 
     less(args){
         let path = this.processPath(args[0])
 
-        if(Disk.exists(path)){
-            let file = Disk.read(path)
-            if(file.type === "file"){
-                this.setState({
-                    editor: true,
-                    editorFile: "",
-                    editorContents: file.contents,
-                    editorReadOnly: true,
-                    editorMessage: "Press 'q' to exit"
-                })
-            }else{
-                return args[0] + " is not a file"
+        try {
+            if (Disk.typeOf(path) === "dir"){
+                return args[0] + " is a directory"
             }
-        }else{
-            return args[0] + " does not exist"
+        } catch (error) {
+            return error.message
         }
+
+        this.setState({
+            editor: true,
+            editorFile: "",
+            editorContents: Disk.read(path).contents,
+            editorReadOnly: true,
+            editorMessage: "Press 'q' to exit"
+        })
     }
 
     cp(args){
         let pathFrom = this.processPath(args[0])
         let pathTo = this.processPath(args[1])
 
-        if(Disk.exists(pathFrom)){
+        try {
             let fileFrom = Disk.read(pathFrom)
-
             if(Disk.exists(pathTo)){
-                let fileTo = Disk.read(pathTo)
-                if(fileTo.type === "file"){
+                if(Disk.typeOf(pathTo) == "file"){
                     Disk.edit(pathTo, fileFrom.contents)
                 }else{
                     return args[1] + " is a directory"
@@ -220,8 +232,8 @@ export default class Terminal extends React.Component{
             }else{
                 Disk.newFile(pathTo, fileFrom.contents)
             }
-        }else{
-            return args[0] + " does not exist"
+        } catch (error) {
+            return error.message
         }
     }
 
@@ -229,23 +241,21 @@ export default class Terminal extends React.Component{
         let pathFrom = this.processPath(args[0])
         let pathTo = this.processPath(args[1])
 
-        if(Disk.exists(pathFrom)){
+        try {
             let fileFrom = Disk.read(pathFrom)
-
             if(Disk.exists(pathTo)){
-                let fileTo = Disk.read(pathTo)
-                if(fileTo.type === "file"){
+                if(Disk.typeOf(pathTo) == "file"){
                     Disk.edit(pathTo, fileFrom.contents)
-                    Disk.remove(pathFrom)
                 }else{
                     return args[1] + " is a directory"
                 }
             }else{
                 Disk.newFile(pathTo, fileFrom.contents)
-                Disk.remove(pathFrom)
             }
-        }else{
-            return args[0] + " does not exist"
+
+            Disk.remove(pathFrom)
+        } catch (error) {
+            return error.message
         }
     }
 
@@ -258,17 +268,17 @@ export default class Terminal extends React.Component{
                     recursive = true
             }else{
                 let path = this.processPath(arg)
-                if(Disk.exists(path)){
-                    let file = Disk.read(path)
-                    if(file.type === "file"){
+
+                try {
+                    if(Disk.typeOf(path) == "file"){
                         Disk.remove(path)
                     }else if(recursive){
                         Disk.removeDir(path)
                     }else{
                         return arg + " is a directory. Use 'rm -r' to delete it"
                     }
-                }else{
-                    return arg + " does not exist"
+                } catch (error) {
+                    return error.message
                 }
             }
         })
